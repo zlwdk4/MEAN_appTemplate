@@ -1,0 +1,16 @@
+{
+  "name": "mean-apptemplate",
+  "version": "1.0.0",
+  "description": "MEAN app template built from scratch",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.16.2",
+    "mongoose": "^4.13.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
