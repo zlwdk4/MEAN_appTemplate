@@ -10,17 +10,22 @@ var Book = require('./models/bookModel');
 var app = express();
 var port = process.env.PORT || 3001;
 
+//Loads middleware
+//looks at body and sees if there are any json objects in it
+//if there is, it will take that object and load it into req.body
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 var Router = express.Router();
 
-Router.route('/Test')
+Router.route('/Books')
     .post(function (req, res) {
+        //req.body is pulled using the body parser middleware
         var book = new Book(req.body);
         //need a body parser for Express
-        console.log(book);
-        res.send(book);
+        book.save();
+        res.status(201).send(book);  //send status 201 which means created
+        //we send book back to client because we want them to have the id of the book that they're posting
     })
     .get(function (req, res) {
 
@@ -43,7 +48,20 @@ Router.route('/Test')
     });
 
 
+Router.route('/Books/:bookId')
+    .get(function (req, res) {
+        Book.findById(req.params.bookId, function (err, book) {
+            if (err) {
+                res.status(500).send(err);
+            }
+            else {
+                res.json(book);
+            }
 
+
+        });
+
+    });
 
 app.use('/api', Router);
 
