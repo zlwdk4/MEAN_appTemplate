@@ -16,54 +16,11 @@ var port = process.env.PORT || 3001;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-var Router = express.Router();
-
-Router.route('/Books')
-    .post(function (req, res) {
-        //req.body is pulled using the body parser middleware
-        var book = new Book(req.body);
-        //need a body parser for Express
-        book.save();
-        res.status(201).send(book);  //send status 201 which means created
-        //we send book back to client because we want them to have the id of the book that they're posting
-    })
-    .get(function (req, res) {
-
-        var query = {};
-        //this if statement ensures the only thing that is able to be filtered is the genre attribute
-        //if we didn't do this,  any random url would hit the database which isn't ideal
-        if (req.query.genre) {
-            query.genre = req.query.genre;
-        }
-        //Book.find takes a JSON object in its search, req.query is a json object
-        //passing in that query adds a filter to the get on any of the json attributes
-        Book.find(query, function (err, books) {
-            if (err) {
-                res.status(500).send(err);
-            }
-            else {
-                res.json(books);
-            }
-        });
-    });
+bookRouter = require('./Routes/bookRoutes')(Book); //injects Book model into the Router
 
 
-Router.route('/Books/:bookId')
-    .get(function (req, res) {
-        Book.findById(req.params.bookId, function (err, book) {
-            if (err) {
-                res.status(500).send(err);
-            }
-            else {
-                res.json(book);
-            }
-
-
-        });
-
-    });
-
-app.use('/api', Router);
+app.use('/api/Books', bookRouter); //adding /Books at Router use level allows us to separate more (more RESTy)
+//can do  app.use('/api/author', authorRouter);
 
 app.get('/', function (req, res) {
     res.send('welcome to my API');
